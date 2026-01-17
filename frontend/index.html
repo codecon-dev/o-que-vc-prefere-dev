@@ -1,0 +1,46 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="semantic/semantic.min.css">
+    <script
+    src="https://code.jquery.com/jquery-3.1.1.min.js"
+    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+    crossorigin="anonymous"></script>
+    <script src="semantic/semantic.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+
+<body>
+    <div class="ui segment">
+        <h1 class="ui center aligned header">
+            Codecon
+        </h1>
+        
+        <h2 class="ui center aligned header" id="poolReference">
+            Enquete
+        </h2>
+
+        <h3 class="ui center aligned header" id="votedReference"></h3>
+        
+        <div class="codecon-container">
+            <div class="codecon-left-side" id="firstOptionReference" onclick="vote(this)">
+                <h3 class="ui center aligned header">
+                    Opção 01
+                </h3>   
+            </div>
+            
+            <div class="codecon-right-side" id="secondOptionReference" onclick="vote(this)">
+                <h3 class="ui center aligned header">
+                    Opção 02
+                </h3>   
+            </div>
+        </div>
+        <h2>
+            O próximo desafio estará disponível em <span id="timerReference"></span> 
+        </h2>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+
+

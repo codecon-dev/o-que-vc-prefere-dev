@@ -1,0 +1,17 @@
+.codecon-container {
+    display: flex;
+}
+
+.codecon-left-side {
+    width: 50%;
+    background-color: lightblue;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.codecon-right-side {
+    width: 50%;
+    background-color: crimson;
+    padding: 20px;
+    box-sizing: border-box;
+}
