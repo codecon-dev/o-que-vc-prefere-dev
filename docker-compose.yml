@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   api:
     build: ./api
@@ -7,7 +6,14 @@ services:
 
   frontend:
     build: ./frontend
-    ports:
+    expose:
       - "80"
     depends_on:
       - api
+    networks:
+      - default
+      - coolify
+
+networks:
+  coolify:
+    external: true
