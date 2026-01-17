@@ -35,7 +35,7 @@ db.exec(`
   )
 `);
 
-app.post('/createEnquete', (req, res) => {
+app.post('/createPool', (req, res) => {
   let amanha = new Date();
 
   amanha.setDate(amanha.getDate() + 1);
@@ -44,13 +44,18 @@ app.post('/createEnquete', (req, res) => {
   const data_fim = String(amanha)
   const expirada = 0
 
-  const stmt = db.prepare('INSERT INTO Enquetes (nome_enquete, data_fim, expirada) VALUES (?, ?, ?)');
-  const info = stmt.run(nome_enquete, data_fim, expirada);
+  const newPool = db.prepare('INSERT INTO Enquetes (nome_enquete, data_fim, expirada) VALUES (?, ?, ?)');
+  const info = newPool.run(nome_enquete, data_fim, expirada);
 
-  res.json({ id: info.lastInsertRowid, nome_enquete, data_fim , expirada});
+  res.json({ 
+    id: info.lastInsertRowid, 
+    name: nome_enquete, 
+    expired_date: data_fim, 
+    expired: expirada
+  });
 })
 
-app.post('/createOpcao', (req, res) => {
+app.post('/createOption', (req, res) => {
   let id_enquete = 1
   let nome = "opcao 2"
 
@@ -84,7 +89,7 @@ app.post('/vote', (req, res) => {
 })
 
 app.get('/pools', (req, res) => {
-  const enqueteAtual = db.prepare(`SELECT * FROM Enquetes WHERE expirada <> 1 LIMIT 1`);
+  const currentPool = db.prepare(`SELECT * FROM Enquetes WHERE expirada <> 1 LIMIT 1`);
 
   let options = db.prepare(`SELECT * FROM Opcoes WHERE id_enquete = 1`);
 
@@ -102,9 +107,9 @@ app.get('/pools', (req, res) => {
   })
 
   const computedEnquete = {
-    id: enqueteAtual.all()[0].id,
-    name: enqueteAtual.all()[0].nome_enquete,
-    expired_date: enqueteAtual.all()[0].data_fim,
+    id: currentPool.all()[0].id,
+    name: currentPool.all()[0].nome_enquete,
+    expired_date: currentPool.all()[0].data_fim,
     options,
     countVotes: votes.length
   }
@@ -112,10 +117,10 @@ app.get('/pools', (req, res) => {
   res.json(computedEnquete);
 });
 
-app.post('/acabarEnquete', (req, res) => {
-  const stmt = db.prepare('UPDATE Enquetes SET expirada = ? WHERE id = 1');
-  stmt.run(1)
-  res.json({ stmt });
+app.post('/updatePool', (req, res) => {
+  const updatePool = db.prepare('UPDATE Enquetes SET expirada = ? WHERE id = 1');
+  updatePool.run(1)
+  res.json({ updatePool });
 })
 
 app.listen(3000, () => console.log('Server running on 3000'));
