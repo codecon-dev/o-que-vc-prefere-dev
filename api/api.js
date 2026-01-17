@@ -86,15 +86,15 @@ app.post('/vote', (req, res) => {
 app.get('/pools', (req, res) => {
   const enqueteAtual = db.prepare(`SELECT * FROM Enquetes WHERE expirada <> 1 LIMIT 1`);
 
-  let opcoes = db.prepare(`SELECT * FROM Opcoes WHERE id_enquete = 1`);
+  let options = db.prepare(`SELECT * FROM Opcoes WHERE id_enquete = 1`);
 
-  const votos = db.prepare(`SELECT * FROM Votos WHERE id_enquete = 1`);
+  const votes = db.prepare(`SELECT * FROM Votos WHERE id_enquete = 1`);
 
-  opcoes = opcoes.all().map((o) => {
+  options = options.all().map((o) => {
     return {
       id: o.id,
-      nome: o.nome,
-      totalVotos: votos.all().reduce((acc, voto) => {
+      name: o.nome,
+      votes: votes.all().reduce((acc, voto) => {
       acc[voto.id_opcao] = (acc[voto.id_opcao] || 0) + 1;
       return acc;
     }, {})
@@ -103,10 +103,10 @@ app.get('/pools', (req, res) => {
 
   const computedEnquete = {
     id: enqueteAtual.all()[0].id,
-    nome_enquete: enqueteAtual.all()[0].nome_enquete,
-    data_fim: enqueteAtual.all()[0].data_fim,
-    opcoes,
-    total_de_votos : votos.length
+    name: enqueteAtual.all()[0].nome_enquete,
+    expired_date: enqueteAtual.all()[0].data_fim,
+    options,
+    countVotes: votes.length
   }
 
   res.json(computedEnquete);
