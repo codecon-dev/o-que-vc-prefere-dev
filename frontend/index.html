@@ -2,41 +2,36 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <link rel="stylesheet" type="text/css" href="semantic/semantic.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css" />
     <script
       src="https://code.jquery.com/jquery-3.1.1.min.js"
       integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
       crossorigin="anonymous"
     ></script>
-    <script src="semantic/semantic.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.js"></script>
+
     <link rel="stylesheet" href="style.css" />
     <title>O que você prefere?</title>
   </head>
 
   <body>
     <div class="ui segment">
-        <h1 class="ui center aligned header">
-            O que você prefere?
-        </h1>
+      <h1 class="ui center aligned header">O que você prefere?</h1>
 
-        <h3 class="ui center aligned header" id="votedReference"></h3>
+      <h3 class="ui center aligned header" id="votedReference"></h3>
 
-        <div class="codecon-container">
-            <div class="codecon-left-side" id="firstOptionReference" onclick="vote(this)">
-                <h3 class="ui center aligned header">
-                    Opção 01
-                </h3>
-                <h4 class="ui center aligned header" id="firstOptionPercentageReference"></h4>
-            </div>
+      <div class="codecon-container">
+        <div class="codecon-left-side" id="firstOptionReference" onclick="vote(this)">
+          <h3 class="ui center aligned header">Opção 01</h3>
+          <h4 class="ui center aligned header" id="firstOptionPercentageReference"></h4>
+        </div>
 
-            <div class="codecon-right-side" id="secondOptionReference" onclick="vote(this)">
-                <h3 class="ui center aligned header">
-                    Opção 02
-                </h3>
-                <h4 class="ui center aligned header" id="secondOptionPercentageReference"></h4>
+        <div class="codecon-right-side" id="secondOptionReference" onclick="vote(this)">
+          <h3 class="ui center aligned header">Opção 02</h3>
+          <h4 class="ui center aligned header" id="secondOptionPercentageReference"></h4>
         </div>
       </div>
-      <h2 class='ui center aligned header'>O próximo desafio estará disponível em <span id="timerReference"></span></h2>
+      <h2 class="ui center aligned header">O próximo desafio estará disponível em <span id="timerReference"></span></h2>
     </div>
     <script src="script.js"></script>
   </body>
