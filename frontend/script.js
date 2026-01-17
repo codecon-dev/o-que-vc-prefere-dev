@@ -12,16 +12,14 @@ async function getPool() {
         const result = await response.json();
         console.log("getPool complete! response:", result);
         
-        var poolReference = document.getElementById("poolReference");
         var firstOptionReference = document.getElementById("firstOptionReference");
         var secondOptionReference = document.getElementById("secondOptionReference");
         
-        poolReference.innerHTML = result.name;
         firstOptionReference.dataset.id = result.options[0].id;
-        firstOptionReference.innerHTML = result.options[0].name;
+        firstOptionReference.innerHTML = "<h3 class='ui center aligned header'>"+result.options[0].name+"</h3>";
         
         secondOptionReference.dataset.id = result.options[1].id;
-        secondOptionReference.innerHTML = result.options[1].name;
+        secondOptionReference.innerHTML = "<h3 class='ui center aligned header'>"+result.options[1].name+"</h3>";
         
         countdownTimeStart(new Date(result.expired_date));
     } catch (error) {
@@ -53,14 +51,14 @@ async function vote(element) {
         var firstOptionReference = document.getElementById("firstOptionReference");
         var secondOptionReference = document.getElementById("secondOptionReference");
         var countVotes = result.countVotes;
-        
-        var firstOptionPercentage = (result.totalVotes[0] / countVotes) * 100;
-        var secondOptionPercetage = (result.totalVotes[1] / countVotes) * 100;
+
+        var firstOptionPercentage = (result.options[0][0] / countVotes) * 100;
+        var secondOptionPercetage = (result.options[0][1] / countVotes) * 100;
         
         firstOptionReference.style.width = firstOptionPercentage;
         secondOptionReference.style.width = secondOptionPercetage;
         
-        votedReference.innerHTML = "você escolheu <b> xxxx" + "</b> e mais <b>" + result.countVotes + "</b> votaram";
+        votedReference.innerHTML = "Obrigado por votar, você e mais " + result.countVotes + " pessoas votaram.";
         
     } catch (error) {
         console.error(error.message);
