@@ -52,11 +52,11 @@ async function vote(element) {
         var secondOptionReference = document.getElementById("secondOptionReference");
         var countVotes = result.countVotes;
 
-        var firstOptionPercentage = (result.options[0][0] / countVotes) * 100;
-        var secondOptionPercetage = (result.options[0][1] / countVotes) * 100;
+        var firstOptionPercentage = (result.options[0][1] / countVotes) * 100;
+        var secondOptionPercetage = (result.options[0][0] / countVotes) * 100;
         
-        firstOptionReference.style.width = firstOptionPercentage;
-        secondOptionReference.style.width = secondOptionPercetage;
+        firstOptionReference.style.width = firstOptionPercentage + "%";
+        secondOptionReference.style.width = secondOptionPercetage + "%";
         
         votedReference.innerHTML = "Obrigado por votar, você e mais " + result.countVotes + " pessoas votaram.";
         
