@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import Database from 'better-sqlite3';
+import fs from 'fs';
 
 const app = express();
 app.use(cors());
@@ -11,116 +12,90 @@ const db = new Database('dev.db');
 db.exec(`
   CREATE TABLE IF NOT EXISTS Enquetes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome_enquete TEXT,
+    json_id INTEGER,
+    data_inicio TEXT,
     data_fim TEXT,
-    expirada INTEGER
-  )
-`);
-db.exec(`
+    expirada INTEGER DEFAULT 0
+  );
   CREATE TABLE IF NOT EXISTS Opcoes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_enquete INTEGER,
     nome TEXT,
-
     FOREIGN KEY (id_enquete) REFERENCES Enquetes(id)
-  )
-`);
-db.exec(`
+  );
   CREATE TABLE IF NOT EXISTS Votos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_enquete INTEGER,
     id_opcao INTEGER,
-
-    FOREIGN KEY (id_enquete) REFERENCES Enquetes(id)
+    FOREIGN KEY (id_enquete) REFERENCES Enquetes(id),
     FOREIGN KEY (id_opcao) REFERENCES Opcoes(id)
-  )
+  );
 `);
 
-app.post('/createPool', (req, res) => {
-  let amanha = new Date();
+const DURATION = 2;
 
-  amanha.setDate(amanha.getDate() + 1);
+const getRawPolls = () => JSON.parse(fs.readFileSync('./votacao_opcoes_60.json', 'utf8')).votacao;
 
-  const nome_enquete = 'TESTE 1'
-  const data_fim = String(amanha)
-  const expirada = 0
+const pickPoll = () => {
+  const polls = getRawPolls();
+  const used = db.prepare('SELECT json_id FROM Enquetes').all().map(r => r.json_id);
+  const pool = polls.filter(p => !used.includes(p.id));
+  return (pool.length ? pool : polls)[Math.floor(Math.random() * (pool.length || polls.length))];
+};
 
-  const newPool = db.prepare('INSERT INTO Enquetes (nome_enquete, data_fim, expirada) VALUES (?, ?, ?)');
-  const info = newPool.run(nome_enquete, data_fim, expirada);
+const rotatePoll = () => {
+  const data = pickPoll();
+  const start = new Date();
+  const end = new Date(start.getTime() + DURATION * 3600000);
+  const { lastInsertRowid: pollId } = db.prepare('INSERT INTO Enquetes (json_id, data_inicio, data_fim) VALUES (?, ?, ?)').run(data.id, start.toISOString(), end.toISOString());
+  db.prepare('INSERT INTO Opcoes (id_enquete, nome) VALUES (?, ?)').run(pollId, data.opcao_a);
+  db.prepare('INSERT INTO Opcoes (id_enquete, nome) VALUES (?, ?)').run(pollId, data.opcao_b);
+  return pollId;
+};
 
-  res.json({ 
-    id: info.lastInsertRowid, 
-    name: nome_enquete, 
-    expired_date: data_fim, 
-    expired: expirada
-  });
-})
-
-app.post('/createOption', (req, res) => {
-  let id_enquete = 1
-  let nome = "opcao 2"
-
-  const stmt = db.prepare('INSERT INTO Opcoes (id_enquete, nome) VALUES (?, ?)');
-  const info = stmt.run(id_enquete, nome);
-
-  res.json({ id: info.lastInsertRowid, id_enquete, nome });
-})
-
-app.post('/vote', (req, res) => {
-  const { id_option} = req.body
-
-  const pool = db.prepare(`SELECT * FROM Enquetes WHERE expirada <> 1 LIMIT 1`).all();
-  const id_pool = pool[0].id
-  console.log(id_pool)
-  const dbPrepare = db.prepare('INSERT INTO Votos (id_enquete, id_opcao) VALUES (?, ?)');
-  const info = dbPrepare.run(id_pool, id_option);
-
-  let options = db.prepare(`SELECT * FROM Opcoes WHERE id_enquete = 1`);
-
-  const votes = db.prepare(`SELECT * FROM Votos WHERE id_enquete = 1`).all();
-
-  options = options.all().map((o) => {
-    return votes.reduce((acc, voto) => {
-      acc[voto.id_opcao] = ((acc[voto.id_opcao] || 0) + 1);
-      return acc;
-    }, {})
-  })
-
-  res.json({ id_pool, id_option, options, countVotes : votes.length})
-})
+const resolveActive = () => {
+  let poll = db.prepare('SELECT * FROM Enquetes WHERE expirada = 0 ORDER BY id DESC LIMIT 1').get();
+  if (!poll || new Date() > new Date(poll.data_fim)) {
+    if (poll) db.prepare('UPDATE Enquetes SET expirada = 1 WHERE id = ?').run(poll.id);
+    return db.prepare('SELECT * FROM Enquetes WHERE id = ?').get(rotatePoll());
+  }
+  return poll;
+};
 
 app.get('/pools', (req, res) => {
-  const currentPool = db.prepare(`SELECT * FROM Enquetes WHERE expirada <> 1 LIMIT 1`);
-
-  let options = db.prepare(`SELECT * FROM Opcoes WHERE id_enquete = 1`);
-
-  const votes = db.prepare(`SELECT * FROM Votos WHERE id_enquete = 1`);
-
-  options = options.all().map((o) => {
-    return {
-      id: o.id,
-      name: o.nome,
-      votes: votes.all().reduce((acc, voto) => {
-      acc[voto.id_opcao] = (acc[voto.id_opcao] || 0) + 1;
-      return acc;
-    }, {})
-    };
-  })
-
-  const computedEnquete = {
-    id: currentPool.all()[0].id,
-    name: currentPool.all()[0].nome_enquete,
-    expired_date: currentPool.all()[0].data_fim,
-    options,
-    countVotes: votes.length
+  try {
+    const poll = resolveActive();
+    const opts = db.prepare('SELECT id, nome FROM Opcoes WHERE id_enquete = ?').all(poll.id);
+    const votes = db.prepare('SELECT id_opcao, COUNT(*) as c FROM Votos WHERE id_enquete = ? GROUP BY id_opcao').all(poll.id);
+    const total = votes.reduce((a, v) => a + v.c, 0);
+    res.json({
+      id: poll.id,
+      end: poll.data_fim,
+      total,
+      options: opts.map(o => ({ id: o.id, name: o.nome, votes: votes.find(v => v.id_opcao === o.id)?.c || 0 }))
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
   }
-
-  res.json(computedEnquete);
 });
 
-app.post('/updatePool', (req, res) => {
-  const updatePool = db.prepare('UPDATE Enquetes SET expirada = ? WHERE id = 1');
-  updatePool.run(1)
-  res.json({ updatePool });
-})
+app.post('/vote', (req, res) => {
+  const { id_option: optId } = req.body;
+  if (!optId) return res.status(400).end();
+  try {
+    const poll = resolveActive();
+    const valid = db.prepare('SELECT id FROM Opcoes WHERE id = ? AND id_enquete = ?').get(optId, poll.id);
+    if (!valid) return res.status(400).end();
+    db.prepare('INSERT INTO Votos (id_enquete, id_opcao) VALUES (?, ?)').run(poll.id, optId);
+    const votes = db.prepare('SELECT id_opcao, COUNT(*) as c FROM Votos WHERE id_enquete = ? GROUP BY id_opcao').all(poll.id);
+    res.json({
+      poll: poll.id,
+      total: votes.reduce((a, v) => a + v.c, 0),
+      options: votes.map(v => ({ id: v.id_opcao, votes: v.c }))
+    });
+  } catch (e) {
+    res.status(500).end();
+  }
+});
 
-app.listen(3000, () => console.log('Server running on 3000'));
+app.listen(3000);
