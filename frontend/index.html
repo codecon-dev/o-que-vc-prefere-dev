@@ -1,37 +1,61 @@
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css" />
-    <script
-      src="https://code.jquery.com/jquery-3.1.1.min.js"
-      integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-      crossorigin="anonymous"
-    ></script>
-    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.js"></script>
-    <link rel="stylesheet" href="style.css" />
-    <title>O que você prefere?</title>
-  </head>
+<!DOCTYPE html>
+<html lang="pt-br">
 
-  <body>
-    <div class="ui segment">
-      <h1 class="ui center aligned header">O que você prefere?</h1>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>O que você prefere? | Codecon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
 
-      <h3 class="ui center aligned header" id="votedReference"></h3>
+<body>
+  <header class="header">
+    <div class="logo-area">
+      <span class="logo-sub">A CODECON É UM PROJETO ORGULHOSAMENTE MANTIDO POR:</span>
+      <div class="logo-placeholder">CODECON</div>
+    </div>
+  </header>
 
-      <div class="codecon-container">
-        <div class="codecon-left-side" id="firstOptionReference" onclick="vote(this)">
-          <h3 class="ui center aligned header">Opção 01</h3>
-          <h4 class="ui center aligned header" id="firstOptionPercentageReference"></h4>
-        </div>
+  <main class="main">
+    <h1 class="title">nós falamos dev<br><span class="highlight">fluentemente</span></h1>
+    <p class="desc">Vote no seu dilema dev favorito e veja o que a comunidade escolheu.</p>
 
-        <div class="codecon-right-side" id="secondOptionReference" onclick="vote(this)">
-          <h3 class="ui center aligned header">Opção 02</h3>
-          <h4 class="ui center aligned header" id="secondOptionPercentageReference"></h4>
+    <div class="poll-container">
+      <div class="vs-badge">
+        <div class="vs-sticker">VS</div>
+      </div>
+
+      <div class="option-box left" id="opt-0" onclick="vote(0)">
+        <div class="bar" id="bar-0"></div>
+        <div class="content">
+          <span class="opt-name" id="name-0">...</span>
+          <span class="opt-perc" id="perc-0">0%</span>
         </div>
       </div>
-      <h2 class="ui center aligned header">O próximo desafio estará disponível em <span id="timerReference"></span></h2>
+
+      <div class="option-box right" id="opt-1" onclick="vote(1)">
+        <div class="bar" id="bar-1"></div>
+        <div class="content">
+          <span class="opt-name" id="name-1">...</span>
+          <span class="opt-perc" id="perc-1">0%</span>
+        </div>
+      </div>
     </div>
-    <script src="script.js"></script>
-  </body>
+
+    <div class="status-box">
+      <div class="voted-msg" id="votedReference"></div>
+      <div class="timer">PROXIMA RODADA EM: <span id="timerReference">00:00:00</span></div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <a href="#" class="btn-primary">ASSINE NOSSA NEWSLETTER E JUNTE-SE À +8.500 INSCRITOS</a>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+
 </html>
