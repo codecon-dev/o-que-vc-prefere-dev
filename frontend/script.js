@@ -13,13 +13,23 @@ async function getPool() {
     console.log("getPool complete! response:", result);
 
     var firstOptionReference = document.getElementById("firstOptionReference");
-    var secondOptionReference = document.getElementById("secondOptionReference");
+    var secondOptionReference = document.getElementById(
+      "secondOptionReference",
+    );
 
     firstOptionReference.dataset.id = result.options[0].id;
-    firstOptionReference.innerHTML = "<h3 class='ui center aligned header'>" + result.options[0].name + "</h3><h4 class='ui center aligned header' id='firstOptionPercentageReference'></h4>";
+    firstOptionReference.title = result.options[0].name;
+    firstOptionReference.innerHTML =
+      "<h3 class='ui center aligned header'>" +
+      result.options[0].name +
+      "</h3><h4 class='ui center aligned header' id='firstOptionPercentageReference'></h4>";
 
     secondOptionReference.dataset.id = result.options[1].id;
-    secondOptionReference.innerHTML = "<h3 class='ui center aligned header'>" + result.options[1].name + "</h3><h4 class='ui center aligned header' id='secondOptionPercentageReference'></h4>";
+    secondOptionReference.title = result.options[1].name;
+    secondOptionReference.innerHTML =
+      "<h3 class='ui center aligned header'>" +
+      result.options[1].name +
+      "</h3><h4 class='ui center aligned header'  id='secondOptionPercentageReference'></h4>";
 
     countdownTimeStart(new Date(result.expired_date));
   } catch (error) {
@@ -49,7 +59,9 @@ async function vote(element) {
 
     var votedReference = document.getElementById("votedReference");
     var firstOptionReference = document.getElementById("firstOptionReference");
-    var secondOptionReference = document.getElementById("secondOptionReference");
+    var secondOptionReference = document.getElementById(
+      "secondOptionReference",
+    );
     var countVotes = result.countVotes;
 
     var firstOptionPercentage = (result.options[0][1] / countVotes) * 100;
@@ -58,16 +70,25 @@ async function vote(element) {
     firstOptionReference.style.width = firstOptionPercentage + "%";
     secondOptionReference.style.width = secondOptionPercetage + "%";
 
-    var firstOptionPercentageReference = document.getElementById("firstOptionPercentageReference");
-        firstOptionPercentageReference.innerHTML = "("+firstOptionPercentage+"%)";
+    var firstOptionPercentageReference = document.getElementById(
+      "firstOptionPercentageReference",
+    );
+    firstOptionPercentageReference.innerHTML =
+      "(" + firstOptionPercentage + "%)";
 
-        var secondOptionPercentageReference = document.getElementById("secondOptionPercentageReference");
-        secondOptionPercentageReference.innerHTML = "("+secondOptionPercetage+"%)";
+    var secondOptionPercentageReference = document.getElementById(
+      "secondOptionPercentageReference",
+    );
+    secondOptionPercentageReference.innerHTML =
+      "(" + secondOptionPercetage + "%)";
 
-        votedReference.innerHTML = "Obrigado por votar, você e mais " + result.countVotes + " pessoas votaram.";
-    } catch (error) {
-        console.error(error.message);
-    }
+    votedReference.innerHTML =
+      "Obrigado por votar, você e mais " +
+      result.countVotes +
+      " pessoas votaram.";
+  } catch (error) {
+    console.error(error.message);
+  }
 }
 
 function countdownTimeStart(countDownDate) {
@@ -78,7 +99,9 @@ function countdownTimeStart(countDownDate) {
 
     var distance = countDownDate - now;
 
-    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var hours = Math.floor(
+      (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+    );
     var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
