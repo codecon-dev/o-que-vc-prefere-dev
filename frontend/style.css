@@ -7,6 +7,7 @@
     background-color: lightblue;
     padding: 20px;
     box-sizing: border-box;
+    cursor: pointer;
 }
 
 .codecon-right-side {
@@ -14,4 +15,5 @@
     background-color: crimson;
     padding: 20px;
     box-sizing: border-box;
+    cursor: pointer;
 }
