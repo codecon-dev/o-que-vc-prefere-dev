@@ -35,4 +35,13 @@ db.exec(`
   )
 `);
 
+const tableInfo = db.prepare("PRAGMA table_info(Votos)").all();
+const hasIpAddress = tableInfo.some(col => col.name === 'ip_address');
+
+if (!hasIpAddress) {
+  db.exec(`ALTER TABLE Votos ADD COLUMN ip_address TEXT`);
+  db.exec(`ALTER TABLE Votos ADD COLUMN voted_at TEXT`);
+  db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_vote_per_ip ON Votos(id_enquete, ip_address)`);
+}
+
 export default db;
