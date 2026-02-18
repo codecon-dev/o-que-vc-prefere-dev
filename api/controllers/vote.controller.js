@@ -25,8 +25,8 @@ export function create(req, res) {
   
   if (!id_option) {
     return res.status(400).json({ 
-      error: 'Invalid request',
-      message: 'Option ID is required'
+      error: 'Requisição inválida',
+      message: 'ID da opção é obrigatório'
     });
   }
 
@@ -34,15 +34,15 @@ export function create(req, res) {
   
   if (!pool) {
     return res.status(404).json({ 
-      error: 'Not found',
-      message: 'Poll not found'
+      error: 'Não encontrado',
+      message: 'Enquete não encontrada'
     });
   }
 
   if (pool.expirada) {
     return res.status(403).json({ 
-      error: 'Forbidden',
-      message: 'This poll has expired'
+      error: 'Proibido',
+      message: 'Esta enquete já expirou'
     });
   }
 
@@ -50,8 +50,8 @@ export function create(req, res) {
   
   if (hasVoted(pool.id, ipAddress)) {
     return res.status(409).json({ 
-      error: 'Duplicate vote',
-      message: 'You have already voted in this poll'
+      error: 'Voto duplicado',
+      message: 'Você já votou nesta enquete'
     });
   }
 
@@ -70,8 +70,8 @@ export function create(req, res) {
     });
   } catch (error) {
     res.status(500).json({ 
-      error: 'Internal server error',
-      message: 'Failed to register vote'
+      error: 'Erro interno',
+      message: 'Não foi possível registrar seu voto'
     });
   }
 }

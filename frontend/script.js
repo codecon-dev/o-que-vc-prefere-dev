@@ -37,57 +37,71 @@ async function getPool() {
   }
 }
 
-async function vote(element) {
-  try {
-    idOption = element.dataset.id;
-    let data = {
-      id_option: idOption,
-    };
+function showMessage(message, type = 'info') {
+  const votedReference = document.getElementById("votedReference");
+  votedReference.innerHTML = `<div class="ui ${type} message">${message}</div>`;
+  
+  setTimeout(() => {
+    const messageDiv = votedReference.querySelector('.message');
+    if (messageDiv) {
+      messageDiv.style.transition = 'opacity 0.5s';
+      messageDiv.style.opacity = '0';
+      setTimeout(() => votedReference.innerHTML = '', 500);
+    }
+  }, 5000);
+}
 
+async function vote(element) {
+  const idOption = element.dataset.id;
+  const data = { id_option: idOption };
+
+  try {
     const response = await fetch("/api/vote", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
 
+    if (response.status === 409) {
+      const error = await response.json();
+showMessage(error.message || "Querendo burlar a urna né, vacilão?", 'warning');      return;
+    }
+
+    if (response.status === 403) {
+      const error = await response.json();
+      showMessage(error.message || "Esta enquete já expirou zé da manga!", 'error');
+      return;
+    }
+
     if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
+      const error = await response.json();
+      showMessage(error.message || "Erro ao processar seu voto", 'error');
+      return;
     }
 
     const result = await response.json();
-    console.log("vote complete! response:", result);
 
-    var votedReference = document.getElementById("votedReference");
-    var firstOptionReference = document.getElementById("firstOptionReference");
-    var secondOptionReference = document.getElementById(
-      "secondOptionReference",
-    );
-    var countVotes = result.countVotes;
+    const votedReference = document.getElementById("votedReference");
+    const firstOptionReference = document.getElementById("firstOptionReference");
+    const secondOptionReference = document.getElementById("secondOptionReference");
+    const countVotes = result.countVotes;
 
-    var firstOptionPercentage = Math.floor((result.options[0][1] / countVotes) * 100);
-    var secondOptionPercetage = Math.floor((result.options[0][2] / countVotes) * 100);
+    const firstOptionPercentage = Math.floor((result.options[0].votes / countVotes) * 100) || 0;
+    const secondOptionPercentage = Math.floor((result.options[1].votes / countVotes) * 100) || 0;
 
     firstOptionReference.style.width = firstOptionPercentage + "%";
-    secondOptionReference.style.width = secondOptionPercetage + "%";
+    secondOptionReference.style.width = secondOptionPercentage + "%";
 
-    var firstOptionPercentageReference = document.getElementById(
-      "firstOptionPercentageReference",
-    );
-    firstOptionPercentageReference.innerHTML =
-      "(" + firstOptionPercentage + "%)";
+    const firstOptionPercentageReference = document.getElementById("firstOptionPercentageReference");
+    firstOptionPercentageReference.innerHTML = "(" + firstOptionPercentage + "%)";
 
-    var secondOptionPercentageReference = document.getElementById(
-      "secondOptionPercentageReference",
-    );
-    secondOptionPercentageReference.innerHTML =
-      "(" + secondOptionPercetage + "%)";
+    const secondOptionPercentageReference = document.getElementById("secondOptionPercentageReference");
+    secondOptionPercentageReference.innerHTML = "(" + secondOptionPercentage + "%)";
 
-    votedReference.innerHTML =
-      "Obrigado por votar, você e mais " +
-      result.countVotes +
-      " pessoas votaram.";
+    votedReference.innerHTML = 
+      `<div class="ui success message">Obrigado por votar! Você e mais ${countVotes - 1} pessoas votaram.</div>`;
   } catch (error) {
-    console.error(error.message);
+    showMessage("Não foi possível conectar ao servidor. Tente novamente.", 'error');
   }
 }
 
