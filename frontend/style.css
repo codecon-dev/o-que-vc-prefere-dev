@@ -1,19 +1,31 @@
+body{
+    padding-top: 250px;
+}
 .codecon-container {
-    display: flex;
+  display: flex;
+  margin-top: 20px;
 }
 
+.codecon-left-side,
+.codecon-right-side {
+  width: 50%;
+  padding: 40px 20px;
+  box-sizing: border-box;
+  cursor: pointer;
+  text-align: center;
+  color: white;
+}
+
+
 .codecon-left-side {
-    width: 50%;
-    background-color: lightblue;
-    padding: 20px;
-    box-sizing: border-box;
-    cursor: pointer;
+  background-color: blue;
 }
 
 .codecon-right-side {
-    width: 50%;
-    background-color: crimson;
-    padding: 20px;
-    box-sizing: border-box;
-    cursor: pointer;
+  background-color: red;
+}
+
+
+h3,h4{
+    color: white!important;
 }
