@@ -1,6 +1,36 @@
-body{
-    padding-top: 250px;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
+
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;    /* eixo horizontal */
+  align-items: center;       /* eixo vertical */
+  padding: 24px;
+  background: #020024;
+  background: linear-gradient(173deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 70%, rgba(0, 212, 255, 1) 100%);
+  background-attachment: fixed;
+
+}
+
+
+.container-global {                  /* só controla a largura */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.container-global .ui.segment {
+  width: 100%;
+  max-width: 900px;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.10);
+}
+
 .codecon-container {
   display: flex;
   margin-top: 20px;
@@ -19,13 +49,57 @@ body{
 
 .codecon-left-side {
   background-color: blue;
+  border-radius: 10px;
 }
 
 .codecon-right-side {
   background-color: red;
+  border-radius: 10px;
+
 }
 
+.codecon-left-side:hover {
+  opacity: 0.6;
+  transition: ease-in-out 0.3s;
+}
 
-h3,h4{
-    color: white!important;
+.codecon-right-side:hover {
+  opacity: 0.6;
+  transition: ease-in-out 0.3s;
+}
+
+h3,
+h4 {
+  color: white !important;
+}
+
+/* MOBILE: na vertical e com altura dinâmica */
+@media (max-width: 768px) {
+  .codecon-container {
+    flex-direction: column;
+    height: 60vh;         /* área total das barras (ajuste) */
+     min-height: 380px;  /* garante um tamanho mínimo */
+      gap: 12px;
+  }
+
+  .codecon-left-side,
+  .codecon-right-side {
+    width: 100%;
+    padding: 16px;
+    display: flex; /* centraliza texto dentro da barra */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: flex-grow 350ms ease, transform 150ms ease; /* animação suave quando mudar */
+    
+  }
+
+  /* aqui é o “segredo”: cada lado cresce conforme a % */
+  .codecon-left-side {
+    flex-grow: var(--p1, 50);
+  }
+
+  .codecon-right-side {
+    flex-grow: var(--p2, 50);
+  }
 }
