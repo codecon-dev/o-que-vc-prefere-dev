@@ -49,13 +49,10 @@ body {
 
 .codecon-left-side {
   background-color: blue;
-  border-radius: 10px;
 }
 
 .codecon-right-side {
   background-color: red;
-  border-radius: 10px;
-
 }
 
 .codecon-left-side:hover {
@@ -73,13 +70,11 @@ h4 {
   color: white !important;
 }
 
-/* MOBILE: na vertical e com altura dinâmica */
+/* MOBILE */
 @media (max-width: 768px) {
   .codecon-container {
-    flex-direction: column;
-    height: 60vh;         /* área total das barras (ajuste) */
-     min-height: 380px;  /* garante um tamanho mínimo */
-      gap: 12px;
+    height: 30vh;         /* área total das barras (ajuste) */
+     min-height: 180px;  /* garante um tamanho mínimo */
   }
 
   .codecon-left-side,
